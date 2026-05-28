@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Usuario {
+  id         String   @id @default(uuid())
+  nome       String
+  email      String   @unique
+  senha      String   // <-- Adicione esta linha
+  tipoPerfil String   // 'mentor' ou 'aluno'
+  avatarUrl  String?
+  criadoEm   DateTime @default(now())
+
+  // Relações
+  perfilMentor         PerfilMentor?
+  disponibilidades     Disponibilidade[]
+  agendamentosMentor   Agendamento[]         @relation("MentorAgendamentos")
+  agendamentosAluno    Agendamento[]         @relation("AlunoAgendamentos")
+  relatoriosComoMentor RelatorioEntrevista[] @relation("MentorRelatorios")
+  relatoriosComoAluno  RelatorioEntrevista[] @relation("AlunoRelatorios")
+  avaliacoesAluno      Avaliacao[]           @relation("AlunoAvaliacoes")
+
+  @@map("usuarios")
+}
+
+model PerfilMentor {
+  id             String   @id @default(uuid())
+  usuarioId      String   @unique
+  bio            String?
+  precoHora      Decimal? @db.Decimal(10, 2)
+  especialidades String[] // Array nativo no Postgres
+  githubUrl      String?
+  linkedinUrl    String?
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@map("perfis_mentores")
+}
+
+model Disponibilidade {
+  id             String    @id @default(uuid())
+  mentorId       String
+  diaDaSemana    Int?      // 0 = Domingo, 1 = Segunda...
+  dataEspecifica DateTime?
+  horaInicio     String
+  horaFim        String
+
+  mentor Usuario @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+
+  @@map("disponibilidades")
+}
+
+model Agendamento {
+  id             String   @id @default(uuid())
+  mentorId       String
+  alunoId        String
+  dataHoraInicio DateTime
+  status         String   @default("pendente") // pendente, confirmado, concluido, cancelado
+  salaVideoUrl   String?
+  vagaAlvo       String
+  linkCurriculo  String?
+  observacoes    String?
+
+  mentor Usuario @relation("MentorAgendamentos", fields: [mentorId], references: [id])
+  aluno  Usuario @relation("AlunoAgendamentos", fields: [alunoId], references: [id])
+
+  pagamento  Pagamento?
+  relatorio  RelatorioEntrevista?
+  avaliacao  Avaliacao?
+
+  @@unique([mentorId, dataHoraInicio])
+  @@map("agendamentos")
+}
+
+model Pagamento {
+  id              String   @id @default(uuid())
+  agendamentoId   String   @unique
+  valorPago       Decimal  @db.Decimal(10, 2)
+  statusPagamento String   @default("aguardando") // aguardando, pago, estornado
+  gatewayId       String?
+  criadoEm        DateTime @default(now())
+
+  agendamento Agendamento @relation(fields: [agendamentoId], references: [id], onDelete: Cascade)
+
+  @@map("pagamentos")
+}
+
+model RelatorioEntrevista {
+  id               String   @id @default(uuid())
+  agendamentoId    String   @unique
+  mentorId         String
+  alunoId          String
+  pontosFortes     String
+  pontosMelhoria   String
+  notaTecnica      Int?
+  notaSoftSkills   Int?
+  vereditoSimulado String
+  criadoEm         DateTime @default(now())
+
+  agendamento Agendamento @relation(fields: [agendamentoId], references: [id], onDelete: Cascade)
+  mentor      Usuario     @relation("MentorRelatorios", fields: [mentorId], references: [id])
+  aluno       Usuario     @relation("AlunoRelatorios", fields: [alunoId], references: [id])
+
+  @@map("relatorios_entrevista")
+}
+
+model Avaliacao {
+  id                 String   @id @default(uuid())
+  agendamentoId      String   @unique
+  alunoId            String
+  notaAoMentor       Int
+  feedbackPlataforma String?
+  criadoEm           DateTime @default(now())
+
+  agendamento Agendamento @relation(fields: [agendamentoId], references: [id], onDelete: Cascade)
+  aluno       Usuario     @relation("AlunoAvaliacoes", fields: [alunoId], references: [id])
+
+  @@map("avaliacoes")
+}

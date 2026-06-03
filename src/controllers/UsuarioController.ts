@@ -58,9 +58,9 @@ export class UsuarioController {
         usuario: novoUsuario
       });
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro na criação de utilizador:', error);
-      return res.status(500).json({ error: 'Erro interno do servidor.' });
+      return res.status(500).json({ error: 'Erro interno do servidor.', details: error.message || error.toString() });
     }
   }
 

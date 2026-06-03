@@ -6,10 +6,10 @@ import { defineConfig } from "prisma/config";
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
-    url: process.env.DATABASE_URL,
+    url: process.env["process.env.PORT"] as string,
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    url: process.env["process.env.PORT"] as string,
   },
   
 });

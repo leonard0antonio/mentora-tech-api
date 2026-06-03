@@ -15,7 +15,7 @@
     "postgres": "^3.4.9"
   },
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "cross-env NODE_OPTIONS=\"--dns-result-order=ipv4first\" tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js"
   },
@@ -27,6 +27,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.9.1",
     "@types/pg": "^8.20.0",
+    "cross-env": "^10.1.0",
     "drizzle-kit": "^0.31.10",
     "prisma": "^7.8.0",
     "tsx": "^4.22.3",

@@ -3,7 +3,8 @@ import cors from 'cors';
 import 'dotenv/config';
 
 import { mentorRoutes } from './routes/mentor.routes';
-import { usuarioRoutes } from './routes/usuario.routes'; // <-- Importação nova
+import { usuarioRoutes } from './routes/usuario.routes'; 
+import { agendamentoRoutes } from './routes/agendamento.routes';
 
 const app = express();
 
@@ -12,7 +13,8 @@ app.use(express.json());
 
 // Injetando as rotas
 app.use('/api/mentores', mentorRoutes);
-app.use('/api/usuarios', usuarioRoutes); // <-- Rota nova
+app.use('/api/usuarios', usuarioRoutes);
+app.use('/api/agendamentos', agendamentoRoutes);
 
 app.get('/api/health', (req, res) => {
   return res.json({ status: 'ok', message: 'API da Mentora Tech a rodar com Prisma! 🚀' });

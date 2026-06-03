@@ -3,8 +3,9 @@ import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import 'dotenv/config';
 
-// Puxa a URL do .env. Se não achar, usa um fallback para o servidor não quebrar no mock.
-const connectionString = process.env.DATABASE_URL || "postgresql://usuario:senha@localhost:5432/mentora_tech";
+// Puxa a URL do .env com suporte ao nome customizado process.env.PORT
+console.log("TESTE ENV:", process.env["process.env.PORT"]);
+const connectionString = process.env["process.env.PORT"] || process.env.DATABASE_URL || "postgresql://usuario:senha@localhost:5432/mentora_tech";
 
 // Cria a conexão nativa com o banco
 const pool = new Pool({ connectionString });

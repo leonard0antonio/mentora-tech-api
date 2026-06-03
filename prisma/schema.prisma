@@ -10,12 +10,11 @@ model Usuario {
   id         String   @id @default(uuid())
   nome       String
   email      String   @unique
-  senha      String   // <-- Adicione esta linha
-  tipoPerfil String   // 'mentor' ou 'aluno'
-  avatarUrl  String?
-  criadoEm   DateTime @default(now())
+  senha      String
+  tipoPerfil String   @map("tipo_perfil")
+  avatarUrl  String?  @map("avatar_url")
+  criadoEm   DateTime @default(now()) @map("criado_em")
 
-  // Relações
   perfilMentor         PerfilMentor?
   disponibilidades     Disponibilidade[]
   agendamentosMentor   Agendamento[]         @relation("MentorAgendamentos")
@@ -29,12 +28,12 @@ model Usuario {
 
 model PerfilMentor {
   id             String   @id @default(uuid())
-  usuarioId      String   @unique
+  usuarioId      String   @unique @map("usuario_id")
   bio            String?
-  precoHora      Decimal? @db.Decimal(10, 2)
-  especialidades String[] // Array nativo no Postgres
-  githubUrl      String?
-  linkedinUrl    String?
+  precoHora      Decimal? @db.Decimal(10, 2) @map("preco_hora")
+  especialidades String[]
+  githubUrl      String?  @map("github_url")
+  linkedinUrl    String?  @map("linkedin_url")
 
   usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 
@@ -43,11 +42,11 @@ model PerfilMentor {
 
 model Disponibilidade {
   id             String    @id @default(uuid())
-  mentorId       String
-  diaDaSemana    Int?      // 0 = Domingo, 1 = Segunda...
-  dataEspecifica DateTime?
-  horaInicio     String
-  horaFim        String
+  mentorId       String    @map("mentor_id")
+  diaDaSemana    Int?      @map("dia_da_semana")
+  dataEspecifica DateTime? @map("data_especifica")
+  horaInicio     String    @map("hora_inicio")
+  horaFim        String    @map("hora_fim")
 
   mentor Usuario @relation(fields: [mentorId], references: [id], onDelete: Cascade)
 
@@ -56,13 +55,13 @@ model Disponibilidade {
 
 model Agendamento {
   id             String   @id @default(uuid())
-  mentorId       String
-  alunoId        String
-  dataHoraInicio DateTime
-  status         String   @default("pendente") // pendente, confirmado, concluido, cancelado
-  salaVideoUrl   String?
-  vagaAlvo       String
-  linkCurriculo  String?
+  mentorId       String   @map("mentor_id")
+  alunoId        String   @map("aluno_id")
+  dataHoraInicio DateTime @map("data_hora_inicio")
+  status         String   @default("pendente")
+  salaVideoUrl   String?  @map("sala_video_url")
+  vagaAlvo       String   @map("vaga_alvo")
+  linkCurriculo  String?  @map("link_curriculo")
   observacoes    String?
 
   mentor Usuario @relation("MentorAgendamentos", fields: [mentorId], references: [id])
@@ -78,11 +77,11 @@ model Agendamento {
 
 model Pagamento {
   id              String   @id @default(uuid())
-  agendamentoId   String   @unique
-  valorPago       Decimal  @db.Decimal(10, 2)
-  statusPagamento String   @default("aguardando") // aguardando, pago, estornado
-  gatewayId       String?
-  criadoEm        DateTime @default(now())
+  agendamentoId   String   @unique @map("agendamento_id")
+  valorPago       Decimal  @db.Decimal(10, 2) @map("valor_pago")
+  statusPagamento String   @default("aguardando") @map("status_pagamento")
+  gatewayId       String?  @map("gateway_id")
+  criadoEm        DateTime @default(now()) @map("criado_em")
 
   agendamento Agendamento @relation(fields: [agendamentoId], references: [id], onDelete: Cascade)
 
@@ -91,15 +90,15 @@ model Pagamento {
 
 model RelatorioEntrevista {
   id               String   @id @default(uuid())
-  agendamentoId    String   @unique
-  mentorId         String
-  alunoId          String
-  pontosFortes     String
-  pontosMelhoria   String
-  notaTecnica      Int?
-  notaSoftSkills   Int?
-  vereditoSimulado String
-  criadoEm         DateTime @default(now())
+  agendamentoId    String   @unique @map("agendamento_id")
+  mentorId         String   @map("mentor_id")
+  alunoId          String   @map("aluno_id")
+  pontosFortes     String   @map("pontos_fortes")
+  pontosMelhoria   String   @map("pontos_melhoria")
+  notaTecnica      Int?     @map("nota_tecnica")
+  notaSoftSkills   Int?     @map("nota_soft_skills")
+  vereditoSimulado String   @map("veredito_simulado")
+  criadoEm         DateTime @default(now()) @map("criado_em")
 
   agendamento Agendamento @relation(fields: [agendamentoId], references: [id], onDelete: Cascade)
   mentor      Usuario     @relation("MentorRelatorios", fields: [mentorId], references: [id])
@@ -110,11 +109,11 @@ model RelatorioEntrevista {
 
 model Avaliacao {
   id                 String   @id @default(uuid())
-  agendamentoId      String   @unique
-  alunoId            String
-  notaAoMentor       Int
-  feedbackPlataforma String?
-  criadoEm           DateTime @default(now())
+  agendamentoId      String   @unique @map("agendamento_id")
+  alunoId            String   @map("aluno_id")
+  notaAoMentor       Int      @map("nota_ao_mentor")
+  feedbackPlataforma String?  @map("feedback_plataforma")
+  criadoEm           DateTime @default(now()) @map("criado_em")
 
   agendamento Agendamento @relation(fields: [agendamentoId], references: [id], onDelete: Cascade)
   aluno       Usuario     @relation("AlunoAvaliacoes", fields: [alunoId], references: [id])

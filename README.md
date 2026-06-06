@@ -53,7 +53,7 @@ npm run dev
 Para facilitar os testes da aplicação, o banco de dados pode ser populado (via seed) com os seguintes usuários de teste:
 
 * **Perfil Mentor:**
-* **E-mail:** `joao.Mentor1@teste.com`
+* **E-mail:** `joao.Mentor2@teste.com`
 * **Senha:** `senha123`
 
 

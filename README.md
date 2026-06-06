@@ -59,7 +59,7 @@ Para facilitar os testes da aplicação, o banco de dados pode ser populado (via
 
 * **Perfil Aluno:**
 * **E-mail:** `joao.aluno1@teste.com`
-* **Senha:** `senha123`
+* **Senha:** `leo123`
 
 ## 🤝 Colaboradores
 

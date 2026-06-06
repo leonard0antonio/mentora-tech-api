@@ -30,7 +30,7 @@ model PerfilMentor {
   id             String   @id @default(uuid())
   usuarioId      String   @unique @map("usuario_id")
   bio            String?
-  precoHora      Decimal? @db.Decimal(10, 2) @map("preco_hora")
+  precoHora      Decimal? @map("preco_hora") @db.Decimal(10, 2)
   especialidades String[]
   githubUrl      String?  @map("github_url")
   linkedinUrl    String?  @map("linkedin_url")
@@ -55,22 +55,22 @@ model Disponibilidade {
 
 model Agendamento {
   id             String   @id @default(uuid())
-  mentorId       String   @map("mentor_id")
-  alunoId        String   @map("aluno_id")
-  dataHoraInicio DateTime @map("data_hora_inicio")
-  status         String   @default("pendente")
-  salaVideoUrl   String?  @map("sala_video_url")
-  vagaAlvo       String   @map("vaga_alvo")
-  linkCurriculo  String?  @map("link_curriculo")
+  mentorId       String   @map("mentor_id") // <-- Mapeado
+  alunoId        String   @map("aluno_id") // <-- Mapeado
+  dataHoraInicio DateTime @map("data_hora_inicio") // <-- Mapeado
+  vagaAlvo       String   @map("vaga_alvo") // <-- Mapeado
+  linkCurriculo  String?  @map("link_curriculo") // <-- Mapeado
   observacoes    String?
+  status         String   @default("pendente") // pendente, confirmado, cancelado, concluido
+  criadoEm       DateTime @default(now()) @map("criado_em") // <-- Mapeado
 
-  mentor Usuario @relation("MentorAgendamentos", fields: [mentorId], references: [id])
-  aluno  Usuario @relation("AlunoAgendamentos", fields: [alunoId], references: [id])
+  mentor              Usuario              @relation("MentorAgendamentos", fields: [mentorId], references: [id])
+  aluno               Usuario              @relation("AlunoAgendamentos", fields: [alunoId], references: [id])
+  pagamento           Pagamento?
+  relatorioEntrevista RelatorioEntrevista?
+  avaliacao           Avaliacao?
 
-  pagamento  Pagamento?
-  relatorio  RelatorioEntrevista?
-  avaliacao  Avaliacao?
-
+  // Impede que um mentor tenha duas sessões no mesmo horário exato
   @@unique([mentorId, dataHoraInicio])
   @@map("agendamentos")
 }
@@ -78,7 +78,7 @@ model Agendamento {
 model Pagamento {
   id              String   @id @default(uuid())
   agendamentoId   String   @unique @map("agendamento_id")
-  valorPago       Decimal  @db.Decimal(10, 2) @map("valor_pago")
+  valorPago       Decimal  @map("valor_pago") @db.Decimal(10, 2)
   statusPagamento String   @default("aguardando") @map("status_pagamento")
   gatewayId       String?  @map("gateway_id")
   criadoEm        DateTime @default(now()) @map("criado_em")
